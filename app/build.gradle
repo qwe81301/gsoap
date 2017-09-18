@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "com.example.inspur.testgsoup"
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    packagingOptions {
+//        exclude "lib/arm64-v8a/libhpstb_client.so"
+//        exclude "lib/arm64-v8a/libgsoapjni.so"
+//    }
+
+    splits {
+        abi {
+            enable false
+            universalApk false  // If true, also generate a universal APK
+            include "armeabi-v7a"
+        }
+    }
+
+    // applicationVariants are e.g. debug, release
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            // For each separate APK per architecture, set a unique version code as described here:
+            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2]
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            if (abi != null) {  // null for the universal-debug, universal-release variants
+                output.versionCodeOverride =
+                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+            }
+        }
+    }
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile project(path: ':gsoap-library')
+//    compile name: 'gsoap-library-1.0.6', ext: 'aar'
+    testCompile 'junit:junit:4.12'
+}

@@ -1,0 +1,57 @@
+package com.inspur.youlook.sdk.gsoap.utils;
+
+import java.util.HashMap;
+
+/**
+ * Created by Jerome
+ * Date on 2016/6/28.
+ */
+public class Constants {
+
+    /**
+     * React Native Status Code
+     **/
+    public static final int RN_STATUS_SUCCESSFUL = 0;
+    public static final int RN_STATUS_PARAMETER_ERROR = 2;
+
+    /* GSOAP Status Code */
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_OK = 2000;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_FAIL = 2001;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_TOO_MANY_CLIENTS = 2002;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_NO_PERMISSION = 2003;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_WAITING_FOR_NOTIFY = 2004;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_NO_RESOURCE = 2005;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_UNAUTHORIZED = 2006;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_INVALID_PARAMS = 2007;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_CLIENT_NOT_FOUND = 2008;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_SERVER_ERROR = 2009;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_MASTER_NOT_EXIST = 2010;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_MASTER_ALREADY_EXIST = 2011;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_NOT_BIND = 2012;
+    public static final int RN_STATUS_CODE_GSOAP_SEARCHING_OVER_30S = 2013;
+    public static final int RN_STATUS_CODE_GSOAP_NOT_CONNECT = 2014;
+
+    /* React Native Status Code Map */
+    public static HashMap<Integer, String> RN_STATUS_CODE_MAP = new HashMap<Integer, String>();
+
+    static {
+        RN_STATUS_CODE_MAP.put(RN_STATUS_SUCCESSFUL, "成功");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_PARAMETER_ERROR, "輸入的參數有誤, 請重新檢查正確性");
+        // GSOAP
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_OK, "機頂盒回傳:HPSTB_OK");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_FAIL, "機頂盒回傳:HPSTB_FAIL");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_TOO_MANY_CLIENTS, "機頂盒回傳:HPSTB_TOO_MANY_CLIENTS");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_NO_PERMISSION, "機頂盒回傳:HPSTB_NO_PERMISSION");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_WAITING_FOR_NOTIFY, "機頂盒回傳:HPSTB_WAITING_FOR_NOTIFY");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_NO_RESOURCE, "機頂盒回傳:HPSTB_NO_RESOURCE");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_UNAUTHORIZED, "機頂盒回傳:HPSTB_UNAUTHORIZED");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_INVALID_PARAMS, "機頂盒回傳:HPSTB_INVALID_PARAMS");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_CLIENT_NOT_FOUND, "機頂盒回傳:HPSTB_CLIENT_NOT_FOUND");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_SERVER_ERROR, "機頂盒回傳:HPSTB_SERVER_ERROR");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_MASTER_NOT_EXIST, "機頂盒回傳:HPSTB_MASTER_NOT_EXIST");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_MASTER_ALREADY_EXIST, "機頂盒回傳:HPSTB_MASTER_ALREADY_EXIST");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_NOT_BIND, "機頂盒回傳:HPSTB_NOT_BIND");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_SEARCHING_OVER_30S, "搜尋機頂盒超時30s");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_NOT_CONNECT, "尚未連接機頂盒, 無法進行此操作");
+    }
+}
