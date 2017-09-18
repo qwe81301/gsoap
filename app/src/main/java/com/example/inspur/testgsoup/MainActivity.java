@@ -1,6 +1,5 @@
 package com.example.inspur.testgsoup;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,8 +11,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import com.inspur.youlook.sdk.gsoap.GsoapConnectionSingleton;
 
 
 import java.util.ArrayList;
@@ -55,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 
     private String mSaveVideoPath = null;
     private String mToggleButtonFlag = null;
+    private String mShowInfoText = null;
 
 
     @Override
@@ -192,16 +190,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                             break;
                         case "getSTBDeviceInfoFlag":
                             mMainPresenter.getSTBDeviceInfo(mUserID, mStbToken);
-                            //延遲執行
-                            mShowInfoTextView.setText("查看機頂盒資訊\n"+ mMainPresenter.getGsoapCallbackObject());
                             break;
                         case "getCapacityOnSTBDeviceInfoFlag":
                             mMainPresenter.getCapacityOnSTBDevice(mUserID, mStbToken);
-                            mShowInfoTextView.setText("查看機頂盒capacity資訊\n"+ mMainPresenter.getGsoapCallbackObject());
                             break;
                         case "getChannelInfoOnSTBDeviceInfoFlag":
                             mMainPresenter.getChannelInfoOnSTBDevice(mUserID, mStbToken);
-                            mShowInfoTextView.setText("查看機頂盒取得機頂盒的頻道清單\n"+ mMainPresenter.getGsoapCallbackObject());
                             break;
                         default:
                             Log.v("TogButton isCheck", String.valueOf(mToggleButtonFlag));
@@ -258,6 +252,28 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         return mSaveVideoPath;
     }
 
+    //取得回傳的GsoapCallbackObject args[2] 再印出來
+    @Override
+    public void getGsoapCallbackObject(String print){
+        mShowInfoText = print;
+        //這裡的判斷用的Flag 跟ToggleButton一樣
+        switch (mToggleButtonFlag) {
+            case "startShareVideoOnSTBDeviceFlag":
+                Log.v("getGsoapCallbackObject", "startShareVideoOnSTBDeviceFlag");
+                break;
+            case "getSTBDeviceInfoFlag":
+                mShowInfoTextView.setText("查看機頂盒資訊\n" + mShowInfoText);
+                break;
+            case "getCapacityOnSTBDeviceInfoFlag":
+                mShowInfoTextView.setText("查看機頂盒capacity資訊\n"+ mShowInfoText);
+                break;
+            case "getChannelInfoOnSTBDeviceInfoFlag":
+                mShowInfoTextView.setText("查看機頂盒取得機頂盒的頻道清單\n"+ mShowInfoText);
+                break;
+            default:
+                Log.v("getGsoapCallbackObject", String.valueOf(mToggleButtonFlag));
+        }
+    }
 
     @Override
     protected void onStart() {

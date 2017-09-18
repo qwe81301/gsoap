@@ -72,7 +72,7 @@ public class MainPresenter implements IMainPresenter {
 
 
     private String mInvokeFlag = null;
-    private String mGsoapCallbackObject = null;
+
 
 
     //拿到搜尋到的STB的IP List
@@ -436,13 +436,10 @@ public class MainPresenter implements IMainPresenter {
 
     //set get GsoapCallbackObject  arg[2] 傳回view顯示
     public void setGsoapCallbackObject(String arg) {
-        mGsoapCallbackObject = arg;
+        mMainActivity.getGsoapCallbackObject(arg);
     }
 
-    @Override
-    public String getGsoapCallbackObject() {
-        return mGsoapCallbackObject;
-    }
+
 
 
 }
