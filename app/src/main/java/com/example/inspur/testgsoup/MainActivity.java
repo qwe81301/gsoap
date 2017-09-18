@@ -73,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         mConnectSTBToggleButton = (ToggleButton) findViewById(R.id.connectSTBToggleButton);
         mFeatureStartStopToggleButton = (ToggleButton) findViewById(R.id.featureStartStopToggleButton);
 
-
-
-//        mMainPresenter.init(this);
-
         // 顯示IP在Spinner上   Spinner
         mIpList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mSearchIpList);
         mIpList.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -100,11 +96,13 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         mFeatureList.add("查看機頂盒資訊功能(STB Info)");
         mFeatureList.add("查看機頂盒capacity資訊(STB capacity)");
         mFeatureList.add("查看機頂盒的頻道清單(STB Channel List)");
+        mFeatureList.add("查看機頂盒的頻道Classification(STB Classification)");
         //mFeatureList.add("選取功能");
         mShowFeatureList = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mFeatureList);
         mShowFeatureList.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mShowFeatureSpinner.setAdapter(mShowFeatureList);
         mShowFeatureSpinner.setSelection(0, false);
+        mShowFeatureSpinner.setEnabled(false);
 
         mShowFeatureSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -127,6 +125,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                     case 3:
                         mShowInfoTextView.setText("已選擇查看機頂盒的頻道清單，請點擊右側開始按鈕");
                         mToggleButtonFlag = "getChannelInfoOnSTBDeviceInfoFlag";
+                        break;
+                    case 4:
+                        mShowInfoTextView.setText("已選擇查看機頂盒的頻道Classification，請點擊右側開始按鈕");
+                        mToggleButtonFlag = "getChannelClassificationInfoFlag";
                         break;
                     default:
                         Log.v("mFeatureList default", String.valueOf(position));
@@ -166,11 +168,14 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                     mMainPresenter.connectToSTBDevice(mSTBDeviceIP, mUserID);
                     mShowInfoTextView.setText("連線上" + mSTBDeviceIP + "\n點選第二個按鈕來觸發開始(錄製)功能");
                     mFeatureStartStopToggleButton.setEnabled(true);
+                    mShowIpSpinner.setEnabled(false);
+                    mShowFeatureSpinner.setEnabled(true);
                 } else {
                     Log.v("mStbToken", String.valueOf(mStbToken));
                     mMainPresenter.disconnectToSTBDevice(mUserID, mStbToken);
                     mShowInfoTextView.setText("已斷開與機頂盒連結");
                     mFeatureStartStopToggleButton.setEnabled(false);
+                    mShowIpSpinner.setEnabled(true);
                 }
             }
         });
@@ -197,6 +202,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                         case "getChannelInfoOnSTBDeviceInfoFlag":
                             mMainPresenter.getChannelInfoOnSTBDevice(mUserID, mStbToken);
                             break;
+                        case "getChannelClassificationInfoFlag":
+                            mMainPresenter.getChannelClassification(mUserID, mStbToken);
+                            break;
                         default:
                             Log.v("TogButton isCheck", String.valueOf(mToggleButtonFlag));
                     }
@@ -220,6 +228,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                             break;
                         case "getChannelInfoOnSTBDeviceInfoFlag":
                             mShowInfoTextView.setText("停止(查看機頂盒取得機頂盒的頻道清單)");
+                            break;
+                        case "getChannelClassificationInfoFlag":
+                            mShowInfoTextView.setText("停止(查看機頂盒的頻道Classification)");
                             break;
                         default:
                             Log.v("ToggleButton default", String.valueOf(mToggleButtonFlag));
@@ -269,6 +280,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                 break;
             case "getChannelInfoOnSTBDeviceInfoFlag":
                 mShowInfoTextView.setText("查看機頂盒取得機頂盒的頻道清單\n"+ mShowInfoText);
+                break;
+            case "getChannelClassificationInfoFlag":
+                mShowInfoTextView.setText("查看機頂盒的頻道Classification\n"+ mShowInfoText);
                 break;
             default:
                 Log.v("getGsoapCallbackObject", String.valueOf(mToggleButtonFlag));

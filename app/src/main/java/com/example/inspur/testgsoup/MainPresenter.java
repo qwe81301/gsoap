@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.inspur.youlook.sdk.gsoap.GsoapConnectionSingleton;
+import com.inspur.youlook.sdk.gsoap.asynctask.GetChannelClassificationAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.GetChannelListAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.GetSTBCapacityAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.GetSTBInfoAsyncTask;
@@ -74,7 +75,6 @@ public class MainPresenter implements IMainPresenter {
     private String mInvokeFlag = null;
 
 
-
     //拿到搜尋到的STB的IP List
     final SearchSTBBySSDPAsyncTask.ReactEventListener searchEventListener = new SearchSTBBySSDPAsyncTask.ReactEventListener() {
         @Override
@@ -115,7 +115,6 @@ public class MainPresenter implements IMainPresenter {
     //
     //
     //homeplus/reactnative/modules/api/NativeGsoapModule.java
-
     @Override
     public void searchSTBDevices() {
         String localHostIp = NetworkUtil.getInstance().getLocalHostIp();
@@ -256,6 +255,17 @@ public class MainPresenter implements IMainPresenter {
     //取得機頂盒頻道的Classification 中文翻作 分類 是指頻道的分級嗎？
     //
     //
+    @Override
+    public void getChannelClassification(String userID, String stbToken) {
+        mInvokeFlag = "getChannelClassificationInvokeFlag";
+        Log.v(TAG, "getChannelClassification    userID=" + userID + ", stbToken=" + stbToken);
+        getChannelClassification(gsoapCallback);
+    }
+
+    public void getChannelClassification(GsoapCallback callback) {
+        // TODO userID & stbToken are not necessary.
+        executeAsyncTask(new GetChannelClassificationAsyncTask(callback), null, null);
+    }
 
     //機頂盒開始對外分享直播。
     //
@@ -338,7 +348,6 @@ public class MainPresenter implements IMainPresenter {
     @Override
     public void saveVideoStreaming(String ip, int port, String filePath) {
         try {
-
             Socket socket = new Socket(ip, port);
             OutputStream out = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
@@ -400,6 +409,10 @@ public class MainPresenter implements IMainPresenter {
                             Log.v("channelSTBInvokeFlag", "object =" + args[2]);
                             setGsoapCallbackObject(String.valueOf(args[2]));
                             break;
+                        case "getChannelClassificationInvokeFlag":
+                            Log.v("ClassificationFlag", "object =" + args[2]);
+                            setGsoapCallbackObject(String.valueOf(args[2]));
+                            break;
                         case "startShareVideoOnSTBDeviceInvokeFlag":
                             try {
                                 mVideoUrl = new JSONObject((String) args[2]).getString("url");//{"url":"http://172.16.129.98:8095","channel":{"freq":729000,"tsid":1,"serviceid": 2,"tveid":0}}
@@ -427,7 +440,6 @@ public class MainPresenter implements IMainPresenter {
                     }
                 }
                 //mCallback.invoke(statusCode, statusMsg, object);
-
             } else {
                 Log.v("gsoapCallback", "Callback is null.");
             }
@@ -438,8 +450,6 @@ public class MainPresenter implements IMainPresenter {
     public void setGsoapCallbackObject(String arg) {
         mMainActivity.getGsoapCallbackObject(arg);
     }
-
-
 
 
 }
