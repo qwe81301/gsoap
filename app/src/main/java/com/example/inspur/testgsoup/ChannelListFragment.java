@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MediaPlayerFragment extends Fragment {
+public class ChannelListFragment extends Fragment {
 
 
-    public MediaPlayerFragment() {
+    public ChannelListFragment() {
         // Required empty public constructor
     }
 
@@ -23,7 +23,7 @@ public class MediaPlayerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_media_player, container, false);
+        return inflater.inflate(R.layout.fragment_channel_list, container, false);
     }
 
 }
