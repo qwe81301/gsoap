@@ -20,9 +20,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 
     private static final String TAG = "Gsoap";
 
-    //    IMainPresenter mMainPresenter = new MainPresenter();
     private IMainPresenter mMainPresenter;
-
 
     private TextView mShowInfoTextView;
     private Button mSearchSTBButton;
@@ -36,8 +34,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
     private String mUserID = "userIDTest";
     private String mSTBDeviceIP;
 
-
-    //    因應大陸那邊的機頂盒需要改channelFreq, channelTsid, channelServiceId
+//    因應大陸那邊的機頂盒需要改channelFreq, channelTsid, channelServiceId
 //    大陸那邊的機頂盒 需改參數 "freq":546000,"tsid":1,"serviceid": 101
 //    原測試參數channelFreq = 729000 , channelTsid = 1 , ChannelServiceId = 2
     private int mChannelFreq = 729000;
@@ -208,9 +205,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                         default:
                             Log.v("TogButton isCheck", String.valueOf(mToggleButtonFlag));
                     }
-//                    mMainPresenter.startShareVideoOnSTBDevice(mUserID, mStbToken, mChannelFreq, mChannelTsid, mChannelServiceId, "http_socket", "default", "default");
-//                    mShowInfoTextView.setText("開始錄製影片，影片路徑為:" + getObbDir().getAbsolutePath() + "\n\n再次點擊按鈕即可停止錄製\n" +
-//                            "\n頻道的Frequency:" + mChannelFreq + "\n頻道的TSID:" + mChannelTsid + "\n頻道的ServiceID:" + mChannelServiceId);
                     mConnectSTBToggleButton.setEnabled(false);
                     mShowFeatureSpinner.setEnabled(false);
                 } else {
@@ -265,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
 
     //取得回傳的GsoapCallbackObject args[2] 再印出來
     @Override
-    public void getGsoapCallbackObject(String print){
-        mShowInfoText = print;
+    public void getGsoapCallbackObject(String printSTBInfo){
+        mShowInfoText = printSTBInfo;
         //這裡的判斷用的Flag 跟ToggleButton一樣
         switch (mToggleButtonFlag) {
             case "startShareVideoOnSTBDeviceFlag":

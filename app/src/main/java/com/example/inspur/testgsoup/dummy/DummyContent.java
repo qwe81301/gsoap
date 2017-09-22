@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import android.util.Log;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -38,7 +39,8 @@ public class DummyContent {
     }
 
     private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+//        Log.v("makeDetails(position)",makeDetails(position));
+        return new DummyItem(String.valueOf(position), "ItemT " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {

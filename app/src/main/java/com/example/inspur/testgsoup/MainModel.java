@@ -11,6 +11,12 @@ import java.util.List;
 public class MainModel implements IMainModel {
 
     private List<String> mIPList = null;
+
+//    public MainModel(List<String> mIPList) {
+//        this.mIPList = mIPList;
+//    }
+
+
     @Override
     public void setIpArrayList(List<String> ipList) {
         Log.v("mSearchIpListModel", String.valueOf(ipList));

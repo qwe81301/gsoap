@@ -2,6 +2,7 @@ package com.example.inspur.testgsoup;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -47,6 +48,8 @@ public class MainPresenter implements IMainPresenter {
     private static final String TAG = "Gsoap";
     private IMainActivity mMainActivity = null; //null 可以拿掉？ 現在這狀況下 有或沒有 會影響？
     private IMainModel mMainModel;
+    private ChannelListBlankFragment mChannelListBlankFragment = null;
+//    private ChannelListBlankFragment mChannelListBlankFragment;
 
     public MainPresenter(IMainActivity activity, Context context) { //? 改成MainActivity activity也可以run
         mMainActivity = activity;
@@ -57,6 +60,15 @@ public class MainPresenter implements IMainPresenter {
         GsoapConnectionSingleton.getInstance().init(context);
 
     }
+
+    public MainPresenter(ChannelListBlankFragment fragment,Context context){
+//        mChannelListBlankFragment = new ChannelListBlankFragment();
+        mChannelListBlankFragment = fragment;
+        NetworkUtil.getInstance().init(context);
+        GsoapConnectionSingleton.getInstance().init(context);
+
+    }
+
 
     private String mSearchDevicesIP;
     private String mVideoUrl;
@@ -94,13 +106,15 @@ public class MainPresenter implements IMainPresenter {
                 //mSearchIpListPresenter: [172.16.129.98, 172.16.129.44]
                 Log.v("mSearchIpListPresenter", String.valueOf(mSearchIpList));
                 //傳拿到的IpList給Model
-                mMainModel.setIpArrayList(mSearchIpList);
-                updateViewIpList();
+//                mMainModel.setIpArrayList(mSearchIpList);// 為了做MediaViewActivity 暫時註解 到時候要解回來
+//                updateViewIpList();// 為了做MediaViewActivity 暫時註解 到時候要解回來
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     };
+
+
 
     //Presenter傳IpList給View
     @Override
@@ -252,8 +266,8 @@ public class MainPresenter implements IMainPresenter {
         executeAsyncTask(new GetChannelListAsyncTask(callback), null, null);
     }
 
-    //取得機頂盒頻道的Classification 中文翻作 分類 是指頻道的分級嗎？
-    //
+    //取得機頂盒頻道的Classification 中文翻作 分類 是指頻道的分級嗎？ 只有編號 和 頻道名稱 感覺也不太像是分級的意思
+    //[{"bat":1,"name":"央视频道"}, ... ,{"bat":2,"name":"北京频道"}]
     //
     @Override
     public void getChannelClassification(String userID, String stbToken) {
@@ -267,6 +281,15 @@ public class MainPresenter implements IMainPresenter {
         executeAsyncTask(new GetChannelClassificationAsyncTask(callback), null, null);
     }
 
+
+    //Request EPG of STB.
+    //
+    //
+    public void requestEPG(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId, final Callback callback) {
+        Log.v(TAG, "requestEPG   userID=" + userID + ", stbToken=" + stbToken);
+        Log.v(TAG, "requestEPG   channelFreq=" + channelFreq + ", channelTsid=" + channelTsid + ", channelServiceId=" + channelServiceId);
+        mGsoapProxy.requestEPG(channelFreq, channelTsid, channelServiceId, new ReactCallbackWrapper(callback));
+    }
     //機頂盒開始對外分享直播。
     //
     //
@@ -411,7 +434,12 @@ public class MainPresenter implements IMainPresenter {
                             break;
                         case "getChannelClassificationInvokeFlag":
                             Log.v("ClassificationFlag", "object =" + args[2]);
-                            setGsoapCallbackObject(String.valueOf(args[2]));
+
+//                            setGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
+                            // sent value to ChannelListBlankFragment
+                            //改一下 IP 和 事件直接觸發  獲取頻道清單
+                            //mInvokeFlag 預設 先這功能
+                            setChannelList(String.valueOf(args[2]));
                             break;
                         case "startShareVideoOnSTBDeviceInvokeFlag":
                             try {
@@ -449,6 +477,10 @@ public class MainPresenter implements IMainPresenter {
     //set get GsoapCallbackObject  arg[2] 傳回view顯示
     public void setGsoapCallbackObject(String arg) {
         mMainActivity.getGsoapCallbackObject(arg);
+    }
+
+    public void setChannelList(String channelList) {
+        mChannelListBlankFragment.getChannelList(channelList);
     }
 
 
