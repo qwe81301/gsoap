@@ -28,7 +28,8 @@ public class ChannelListBlankFragment extends Fragment {
 
     private ListView mChannelListListView;
     private String mBatChannelListItem;
-    private List<String> mChannelListBat = new ArrayList<String>();
+    private String mNameChannelListItem;
+    private List<String> mChannelList = new ArrayList<String>();
     private ArrayAdapter<String> mChannelListArrayAdapter = null;
 
     public ChannelListBlankFragment() {
@@ -40,53 +41,65 @@ public class ChannelListBlankFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mMainPresenter = new MainPresenter(this, getActivity());
+        printChannelList();
 
-        mMainPresenter.searchSTBDevices();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    }
+
+    //印出節目列表
+    private void printChannelList(){
         mMainPresenter.connectToSTBDevice("172.16.129.98", "UserID");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        mMainPresenter.getChannelClassification("UserID", "StbToken");
-
+//        mMainPresenter.getChannelClassification("UserID", "StbToken");
+        mMainPresenter.getChannelInfoOnSTBDevice("UserID", "StbToken");
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_channel_list_blank, container, false);
-
         mChannelListListView = (ListView)view.findViewById(R.id.channelListListView);
-
         ArrayAdapter<String> channelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
-        android.R.layout.simple_list_item_1, mChannelListBat);
+        android.R.layout.simple_list_item_1, mChannelList);
         mChannelListListView.setAdapter(channelListArrayAdapter);
-
         return view;
     }
 
 
+//    {
+//          "chno":2,
+//          "name":"bb kuaibao",
+//          "tsid":1,
+//          "serviceid":2,
+//          "freq":729000,
+//          "tunerid":0,
+//          "isHide":"false",
+//          "isFavor":"false",
+//          "isLock":"false",
+//          "isHD":"true",
+//          "type":"tv",
+//          "bat":""
+//    },
     //[{"bat":1,"name":"央视频道"}, ... ,{"bat":2,"name":"北京频道"}]
     public void getChannelList(String channelList){
-//        mChannelListBat.clear();
+//        mChannelList.clear();
         try {
             JSONArray channelListJsonArray = new JSONArray(channelList);
             for (int i = 0; i < channelListJsonArray.length(); i++) {
                 JSONObject channelListJsonObject = channelListJsonArray.getJSONObject(i);
                 Log.v("channelListJsonObject", String.valueOf(channelListJsonObject));
-                mBatChannelListItem = channelListJsonObject.getString("name");
-                Log.v("mBatChannelListItem", mBatChannelListItem);
-                mChannelListBat.add(mBatChannelListItem);
+                mBatChannelListItem = channelListJsonObject.getString("bat");
+                mNameChannelListItem = channelListJsonObject.getString("name");
+                String channelListText = mBatChannelListItem+"  "+mNameChannelListItem;
+                Log.v("mBatNameChannelListItem", channelListText);
+                mChannelList.add(channelListText);
             }
-            Log.v("ChannelListBat", String.valueOf(mChannelListBat));
+            Log.v("ChannelListBat", String.valueOf(mChannelList));
             showChannelList();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -94,15 +107,11 @@ public class ChannelListBlankFragment extends Fragment {
     }
 
     //showChannelListToFragment
-    void showChannelList(){
-//        mChannelListListView = (ListView) mChannelListListView.findViewById(R.id.channelListListView);
-//        if (getActivity()!=null){
+    private void showChannelList(){
             mChannelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, mChannelListBat);
+                    android.R.layout.simple_list_item_1, mChannelList);
             mChannelListListView.setAdapter(mChannelListArrayAdapter);
-            mChannelListArrayAdapter.notifyDataSetChanged();
-//        }
-
+//            mChannelListArrayAdapter.notifyDataSetChanged();
     }
 
 }

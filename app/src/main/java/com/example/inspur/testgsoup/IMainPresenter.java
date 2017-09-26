@@ -21,6 +21,7 @@ public interface IMainPresenter {
     void getCapacityOnSTBDevice(String userID, String stbToken);
     void getChannelInfoOnSTBDevice(String userID, String stbToken);
     void getChannelClassification(String userID, String stbToken);
+//    void requestEPG(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId);
     void startShareVideoOnSTBDevice(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId,
                                            String protocolType, String codec, String res);
     void stopShareVideoOnSTBDevice(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId);

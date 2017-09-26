@@ -10,7 +10,7 @@
     <android.support.v4.app.FragmentTabHost
         android:layout_width="366dp"
         android:layout_height="290dp"
-        android:id="@+id/tabHost"
+        android:id="@+id/tabhost"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="205dp">
 

@@ -15,6 +15,7 @@ import com.inspur.youlook.sdk.gsoap.asynctask.GetSTBInfoAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.GsoapAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.GsoapConnectAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.GsoapDisconnectAsyncTask;
+import com.inspur.youlook.sdk.gsoap.asynctask.RequestEPGAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.RequestShareChannelAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.SearchSTBBySSDPAsyncTask;
 import com.inspur.youlook.sdk.gsoap.asynctask.StopSharingChannelAsyncTask;
@@ -39,8 +40,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
+
 /**
- * Created by inspur on 8/17/17.
+ * Created by bear on 2017/8/17.
  */
 
 public class MainPresenter implements IMainPresenter {
@@ -49,43 +52,42 @@ public class MainPresenter implements IMainPresenter {
     private IMainActivity mMainActivity = null; //null 可以拿掉？ 現在這狀況下 有或沒有 會影響？
     private IMainModel mMainModel;
     private ChannelListBlankFragment mChannelListBlankFragment = null;
-//    private ChannelListBlankFragment mChannelListBlankFragment;
 
-    public MainPresenter(IMainActivity activity, Context context) { //? 改成MainActivity activity也可以run
+
+    public MainPresenter(IMainActivity activity, Context context) {
         mMainActivity = activity;
         mMainModel = new MainModel();
-
         //初始化
-        NetworkUtil.getInstance().init(context);
-        GsoapConnectionSingleton.getInstance().init(context);
-
+        init(context);
     }
 
-    public MainPresenter(ChannelListBlankFragment fragment,Context context){
-//        mChannelListBlankFragment = new ChannelListBlankFragment();
+    public MainPresenter(ChannelListBlankFragment fragment, Context context) {
         mChannelListBlankFragment = fragment;
+        init(context);
+    }
+
+    //初始化
+    private void init(Context context) {
         NetworkUtil.getInstance().init(context);
         GsoapConnectionSingleton.getInstance().init(context);
 
     }
 
-
+    private boolean mIsConnecting = false;
     private String mSearchDevicesIP;
     private String mVideoUrl;
     private String mVideoUrlIPPortArray;
     private String mVideoUrlIP;
     private String mVideoUrlPort;
+    private String mInvokeFlag = null;
 
-    List<String> mSearchIpList = new ArrayList<String>();
+    private List<String> mSearchIpList = new ArrayList<String>();
 
     private static ExecutorService mCachedThreadPool;
     private static SearchSTBBySSDPAsyncTask mSearchSTBAsyncTask;
     private static ExecutorService mSingleThreadExecutor;
-    private boolean mIsConnecting = false;
 
-
-    private String mInvokeFlag = null;
-
+    InvokeFlag mFlag = null;
 
     //拿到搜尋到的STB的IP List
     final SearchSTBBySSDPAsyncTask.ReactEventListener searchEventListener = new SearchSTBBySSDPAsyncTask.ReactEventListener() {
@@ -114,8 +116,6 @@ public class MainPresenter implements IMainPresenter {
         }
     };
 
-
-
     //Presenter傳IpList給View
     @Override
     public void updateViewIpList() {
@@ -123,7 +123,6 @@ public class MainPresenter implements IMainPresenter {
         Log.v("<String>mSearchIpList", String.valueOf(ipList));
         mMainActivity.updateIpList(ipList);
     }
-
 
     //收尋STB
     //
@@ -151,7 +150,7 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
-    //停止收尋STB(暫時沒用)
+    //停止收尋STB(暫時沒使用)
     //
     //
     @Override
@@ -172,12 +171,16 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+
+
     //連線STB
     //
     //
     @Override
     public void connectToSTBDevice(String deviceIP, String userID) {
-        mInvokeFlag = "connectToSTBDeviceInvokeFlag";
+//        mInvokeFlag = "connectToSTBDeviceInvokeFlag";
+        mFlag =InvokeFlag.connectToSTBDeviceInvokeFlag;
+
         com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "connectToSTBDevice", "mDeviceIP=" + deviceIP + ", userID=" + userID);
         connect(deviceIP, userID, gsoapCallback);
     }
@@ -207,7 +210,6 @@ public class MainPresenter implements IMainPresenter {
         com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "disconnectToSTBDevice", "userID=" + userID + ", stbToken=" + stbToken);
         disconnect(gsoapCallback);
     }
-
 
     public void disconnect(GsoapCallback callback) {
         // TODO userID & stbToken are not necessary
@@ -281,15 +283,24 @@ public class MainPresenter implements IMainPresenter {
         executeAsyncTask(new GetChannelClassificationAsyncTask(callback), null, null);
     }
 
-
     //Request EPG of STB.
     //
     //
-    public void requestEPG(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId, final Callback callback) {
-        Log.v(TAG, "requestEPG   userID=" + userID + ", stbToken=" + stbToken);
-        Log.v(TAG, "requestEPG   channelFreq=" + channelFreq + ", channelTsid=" + channelTsid + ", channelServiceId=" + channelServiceId);
-        mGsoapProxy.requestEPG(channelFreq, channelTsid, channelServiceId, new ReactCallbackWrapper(callback));
-    }
+    //暫時 註解 到時候播放器功能做完在用
+//    @Override
+//    public void requestEPG(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId) {
+//        Log.v(TAG, "requestEPG   userID=" + userID + ", stbToken=" + stbToken);
+//        Log.v(TAG, "requestEPG   channelFreq=" + channelFreq + ", channelTsid=" + channelTsid + ", channelServiceId=" + channelServiceId);
+//        requestEPG(channelFreq, channelTsid, channelServiceId, gsoapCallback);
+//    }
+//    public void requestEPG(int channelFreq, int channelTsid, int channelServiceId, GsoapCallback callback) {
+//        String channelInfo = GsoapUtils.getChannelInfo(channelFreq, channelTsid, channelServiceId);
+//        requestEPG(channelInfo, callback);
+//    }
+//    public void requestEPG(String channelInfo, GsoapCallback callback) {
+//        // TODO userID & stbToken are not necessary.
+//        executeAsyncTask(new RequestEPGAsyncTask(callback), null, null, channelInfo);
+//    }
     //機頂盒開始對外分享直播。
     //
     //
@@ -340,7 +351,6 @@ public class MainPresenter implements IMainPresenter {
         Log.v(TAG, "channelFreq=" + channelFreq + ", channelTsid=" + channelTsid + ", channelServiceId=" + channelServiceId);
         stopSharingChannel(channelFreq, channelTsid, channelServiceId, gsoapCallback);
     }
-
 
     public void stopSharingChannel(int channelFreq, int channelTsid, int channelServiceId, GsoapCallback callback) {
         String channelInfo = GsoapUtils.getChannelInfo(channelFreq, channelTsid, channelServiceId);
@@ -402,13 +412,34 @@ public class MainPresenter implements IMainPresenter {
         }
     }
 
+//    private int connectToSTBDeviceInvokeFlag = 0;
+
+
+//    InvokeFlag invokeFlag = null;
+
+
+    public enum InvokeFlag{
+        connectToSTBDeviceInvokeFlag,
+        getSTBDeviceInfoInvokeFlag,
+        getCapacityOnSTBDeviceInvokeFlag,
+        getChannelInfoOnSTBDeviceInvokeFlag,
+        getChannelClassificationInvokeFlag,
+        startShareVideoOnSTBDeviceInvokeFlag,
+    }
+
+//    public setInvokeFlag(InvokeFlag invokeFlag){
+//        this.invokeFlag = invokeFlag;
+//
+//    }
+
+//    InvokeFlag mInvokeFlagg = InvokeFlag.connectToSTBDeviceInvokeFlag;
 
     GsoapCallback gsoapCallback = new GsoapCallback() {
         @Override
         public void invoke(Object... args) {
             if (gsoapCallback != null) {
-                int statusCode = (int) args[0];
-                String statusMsg = (String) args[1];
+//                int statusCode = (int) args[0];
+//                String statusMsg = (String) args[1];
                 Log.v("gsoapCallback", "statusCode=" + args[0] + ", statusMsg=" + args[1]);
                 Object object = null;
                 if (args.length == 3) {
@@ -416,32 +447,32 @@ public class MainPresenter implements IMainPresenter {
 //                    setGsoapCallbackObject(String.valueOf(args[2]));
                     //data = [{"devicesIP":"172.16.129.44","isConnected":false}]
                     Log.v("mInvokeFlag", mInvokeFlag);
-                    switch (mInvokeFlag) {
-                        case "connectToSTBDeviceInvokeFlag":
+
+//                    InvokeFlag invokeFlag =InvokeFlag.connectToSTBDeviceInvokeFlag;
+                    switch (mFlag) {
+                        case connectToSTBDeviceInvokeFlag:
                             Log.v("connectToSTBDeviceFlag", "object =" + args[2]);
                             break;
-                        case "getSTBDeviceInfoInvokeFlag":
+                        case getSTBDeviceInfoInvokeFlag:
                             Log.v("getSTBInfoInvokeFlag", "object =" + args[2]);
                             setGsoapCallbackObject(String.valueOf(args[2]));
                             break;
-                        case "getCapacityOnSTBDeviceInvokeFlag":
+                        case getCapacityOnSTBDeviceInvokeFlag:
                             Log.v("capacitySTBInvokeFlag", "object =" + args[2]);
                             setGsoapCallbackObject(String.valueOf(args[2]));
                             break;
-                        case "getChannelInfoOnSTBDeviceInvokeFlag":
+                        case getChannelInfoOnSTBDeviceInvokeFlag:
                             Log.v("channelSTBInvokeFlag", "object =" + args[2]);
-                            setGsoapCallbackObject(String.valueOf(args[2]));
-                            break;
-                        case "getChannelClassificationInvokeFlag":
-                            Log.v("ClassificationFlag", "object =" + args[2]);
-
 //                            setGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
-                            // sent value to ChannelListBlankFragment
-                            //改一下 IP 和 事件直接觸發  獲取頻道清單
-                            //mInvokeFlag 預設 先這功能
                             setChannelList(String.valueOf(args[2]));
                             break;
-                        case "startShareVideoOnSTBDeviceInvokeFlag":
+                        case getChannelClassificationInvokeFlag:
+                            Log.v("ClassificationFlag", "object =" + args[2]);
+//                            setGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
+                            // sent value to ChannelListBlankFragment
+//                            setChannelList(String.valueOf(args[2]));
+                            break;
+                        case startShareVideoOnSTBDeviceInvokeFlag:
                             try {
                                 mVideoUrl = new JSONObject((String) args[2]).getString("url");//{"url":"http://172.16.129.98:8095","channel":{"freq":729000,"tsid":1,"serviceid": 2,"tveid":0}}
                                 Log.v("gsoapCallback", "videoUrl=" + mVideoUrl);
@@ -485,3 +516,4 @@ public class MainPresenter implements IMainPresenter {
 
 
 }
+
