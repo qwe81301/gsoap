@@ -11,6 +11,6 @@ public interface IMainActivity {
     //Presenter 叫 Activity 做的事情
     void updateIpList(List<String> ipList);
     String getSaveVideoPath();
-    void getGsoapCallbackObject(String print);
+    void printGsoapCallbackObject(String print);
 
 }

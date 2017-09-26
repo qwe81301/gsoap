@@ -25,10 +25,9 @@ import java.util.List;
 public class ChannelListBlankFragment extends Fragment {
 
     private IMainPresenter mMainPresenter;
-
-    private ListView mChannelListListView;
-    private String mBatChannelListItem;
+    private String mChnoChannelListItem;
     private String mNameChannelListItem;
+    private ListView mChannelListListView;
     private List<String> mChannelList = new ArrayList<String>();
     private ArrayAdapter<String> mChannelListArrayAdapter = null;
 
@@ -41,12 +40,12 @@ public class ChannelListBlankFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mMainPresenter = new MainPresenter(this, getActivity());
-        printChannelList();
+        runChannelList();
 
     }
 
-    //印出節目列表
-    private void printChannelList(){
+    //getChannelInfoOnSTBDevice 印出節目列表
+    private void runChannelList(){
         mMainPresenter.connectToSTBDevice("172.16.129.98", "UserID");
         try {
             Thread.sleep(1000);
@@ -64,9 +63,6 @@ public class ChannelListBlankFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_channel_list_blank, container, false);
         mChannelListListView = (ListView)view.findViewById(R.id.channelListListView);
-        ArrayAdapter<String> channelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
-        android.R.layout.simple_list_item_1, mChannelList);
-        mChannelListListView.setAdapter(channelListArrayAdapter);
         return view;
     }
 
@@ -86,16 +82,16 @@ public class ChannelListBlankFragment extends Fragment {
 //          "bat":""
 //    },
     //[{"bat":1,"name":"央视频道"}, ... ,{"bat":2,"name":"北京频道"}]
-    public void getChannelList(String channelList){
+    public void dismantleJsonChannelList(String channelList){
 //        mChannelList.clear();
         try {
             JSONArray channelListJsonArray = new JSONArray(channelList);
             for (int i = 0; i < channelListJsonArray.length(); i++) {
                 JSONObject channelListJsonObject = channelListJsonArray.getJSONObject(i);
                 Log.v("channelListJsonObject", String.valueOf(channelListJsonObject));
-                mBatChannelListItem = channelListJsonObject.getString("bat");
+                mChnoChannelListItem = channelListJsonObject.getString("chno");
                 mNameChannelListItem = channelListJsonObject.getString("name");
-                String channelListText = mBatChannelListItem+"  "+mNameChannelListItem;
+                String channelListText = "("+ mChnoChannelListItem +")  "+mNameChannelListItem;
                 Log.v("mBatNameChannelListItem", channelListText);
                 mChannelList.add(channelListText);
             }

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements IMainActivity {
 
-    private static final String TAG = "Gsoap";
+//    private static final String TAG = "Gsoap";
 
     private IMainPresenter mMainPresenter;
 
@@ -29,10 +29,13 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
     private Spinner mShowFeatureSpinner;
     private ToggleButton mConnectSTBToggleButton;
     private ToggleButton mFeatureStartStopToggleButton;
+    private ToggleButtonFlag mToggleButtonFlag = null;
 
     private String mStbToken = "stbTokenTest";
     private String mUserID = "userIDTest";
     private String mSTBDeviceIP;
+    private String mSaveVideoPath = null;
+    private String mShowInfoText = null;
 
 //    因應大陸那邊的機頂盒需要改channelFreq, channelTsid, channelServiceId
 //    大陸那邊的機頂盒 需改參數 "freq":546000,"tsid":1,"serviceid": 101
@@ -47,9 +50,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
     private ArrayAdapter<String> mShowFeatureList = null;
 
 
-    private String mSaveVideoPath = null;
-    private String mToggleButtonFlag = null;
-    private String mShowInfoText = null;
 
 
     @Override
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         mFeatureList.add("查看機頂盒capacity資訊(STB capacity)");
         mFeatureList.add("查看機頂盒的頻道清單(STB Channel List)");
         mFeatureList.add("查看機頂盒的頻道Classification(STB Classification)");
+        mFeatureList.add("查看機頂盒的EPG(STB EPG)");
         //mFeatureList.add("選取功能");
         mShowFeatureList = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mFeatureList);
         mShowFeatureList.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -109,23 +110,27 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                 switch (position) {
                     case 0:
                         mShowInfoTextView.setText("已選擇錄製功能，請點擊右側開始按鈕");
-                        mToggleButtonFlag = "startShareVideoOnSTBDeviceFlag";
+                        mToggleButtonFlag = ToggleButtonFlag.START_SHARE_VIDEO_ON_STB_DEVICE_INFO_FLAG;
                         break;
                     case 1:
                         mShowInfoTextView.setText("已選擇查看機頂盒資訊功能，請點擊右側開始按鈕");
-                        mToggleButtonFlag = "getSTBDeviceInfoFlag";
+                        mToggleButtonFlag = ToggleButtonFlag.GET_STB_DEVICE_INFO_FLAG;
                         break;
                     case 2:
                         mShowInfoTextView.setText("已選擇查看機頂盒capacity資訊，請點擊右側開始按鈕");
-                        mToggleButtonFlag = "getCapacityOnSTBDeviceInfoFlag";
+                        mToggleButtonFlag = ToggleButtonFlag.GET_CAPACITY_ON_STB_DEVICE_INFO_FLAG;
                         break;
                     case 3:
                         mShowInfoTextView.setText("已選擇查看機頂盒的頻道清單，請點擊右側開始按鈕");
-                        mToggleButtonFlag = "getChannelInfoOnSTBDeviceInfoFlag";
+                        mToggleButtonFlag = ToggleButtonFlag.GET_CHANNEL_INFO_ON_STB_DEVICE_INFO_FLAG;
                         break;
                     case 4:
                         mShowInfoTextView.setText("已選擇查看機頂盒的頻道Classification，請點擊右側開始按鈕");
-                        mToggleButtonFlag = "getChannelClassificationInfoFlag";
+                        mToggleButtonFlag = ToggleButtonFlag.GET_CHANNEL_CLASSIFICATION_INFO_FLAG;
+                        break;
+                    case 5:
+                        mShowInfoTextView.setText("已選擇查看機頂盒的EPG，請點擊右側開始按鈕");
+                        mToggleButtonFlag = ToggleButtonFlag.REQUEST_EPG_INFO_FLAG;
                         break;
                     default:
                         Log.v("mFeatureList default", String.valueOf(position));
@@ -177,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
             }
         });
 
+
+
         //Spinner其他功能要用的開始.停止的ToggleButton（ex:錄製影片...）   ToggleButton (以後新增功能要寫成if判斷是哪個功能進來在決定要做什麼)
         mFeatureStartStopToggleButton.setEnabled(false);
         mFeatureStartStopToggleButton.setOnClickListener(new View.OnClickListener() {
@@ -185,22 +192,25 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                 if (mFeatureStartStopToggleButton.isChecked()) {
                     //開始Spinner已選定功能
                     switch (mToggleButtonFlag) {
-                        case "startShareVideoOnSTBDeviceFlag":
+                        case START_SHARE_VIDEO_ON_STB_DEVICE_INFO_FLAG:
                             mMainPresenter.startShareVideoOnSTBDevice(mUserID, mStbToken, mChannelFreq, mChannelTsid, mChannelServiceId, "http_socket", "default", "default");
                             mShowInfoTextView.setText("開始錄製影片，影片路徑為:" + getObbDir().getAbsolutePath() + "\n\n再次點擊按鈕即可停止錄製\n" +
                                     "\n頻道的Frequency:" + mChannelFreq + "\n頻道的TSID:" + mChannelTsid + "\n頻道的ServiceID:" + mChannelServiceId);
                             break;
-                        case "getSTBDeviceInfoFlag":
+                        case GET_STB_DEVICE_INFO_FLAG:
                             mMainPresenter.getSTBDeviceInfo(mUserID, mStbToken);
                             break;
-                        case "getCapacityOnSTBDeviceInfoFlag":
+                        case GET_CAPACITY_ON_STB_DEVICE_INFO_FLAG:
                             mMainPresenter.getCapacityOnSTBDevice(mUserID, mStbToken);
                             break;
-                        case "getChannelInfoOnSTBDeviceInfoFlag":
+                        case GET_CHANNEL_INFO_ON_STB_DEVICE_INFO_FLAG:
                             mMainPresenter.getChannelInfoOnSTBDevice(mUserID, mStbToken);
                             break;
-                        case "getChannelClassificationInfoFlag":
+                        case GET_CHANNEL_CLASSIFICATION_INFO_FLAG:
                             mMainPresenter.getChannelClassification(mUserID, mStbToken);
+                            break;
+                        case REQUEST_EPG_INFO_FLAG:
+                            mMainPresenter.requestEPG(mUserID, mStbToken,mChannelFreq ,mChannelTsid,mChannelServiceId);
                             break;
                         default:
                             Log.v("TogButton isCheck", String.valueOf(mToggleButtonFlag));
@@ -210,21 +220,24 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                 } else {
                     //停止Spinner已選定功能
                     switch (mToggleButtonFlag) {
-                        case "startShareVideoOnSTBDeviceFlag":
+                        case START_SHARE_VIDEO_ON_STB_DEVICE_INFO_FLAG:
                             mMainPresenter.stopShareVideoOnSTBDevice(mUserID, mStbToken, mChannelFreq, mChannelTsid, mChannelServiceId);
                             mShowInfoTextView.setText("停止錄製影片");
                             break;
-                        case "getSTBDeviceInfoFlag":
+                        case GET_STB_DEVICE_INFO_FLAG:
                             mShowInfoTextView.setText("停止(查看機頂盒資訊功能)");
                             break;
-                        case "getCapacityOnSTBDeviceInfoFlag":
+                        case GET_CAPACITY_ON_STB_DEVICE_INFO_FLAG:
                             mShowInfoTextView.setText("停止(查看機頂盒capacity資訊)");
                             break;
-                        case "getChannelInfoOnSTBDeviceInfoFlag":
+                        case GET_CHANNEL_INFO_ON_STB_DEVICE_INFO_FLAG:
                             mShowInfoTextView.setText("停止(查看機頂盒取得機頂盒的頻道清單)");
                             break;
-                        case "getChannelClassificationInfoFlag":
+                        case GET_CHANNEL_CLASSIFICATION_INFO_FLAG:
                             mShowInfoTextView.setText("停止(查看機頂盒的頻道Classification)");
+                            break;
+                        case REQUEST_EPG_INFO_FLAG:
+                            mShowInfoTextView.setText("停止(查看機頂盒的EPG)");
                             break;
                         default:
                             Log.v("ToggleButton default", String.valueOf(mToggleButtonFlag));
@@ -234,6 +247,15 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                 }
             }
         });
+    }
+
+    private enum ToggleButtonFlag{
+        START_SHARE_VIDEO_ON_STB_DEVICE_INFO_FLAG,
+        GET_STB_DEVICE_INFO_FLAG,
+        GET_CAPACITY_ON_STB_DEVICE_INFO_FLAG,
+        GET_CHANNEL_INFO_ON_STB_DEVICE_INFO_FLAG,
+        GET_CHANNEL_CLASSIFICATION_INFO_FLAG,
+        REQUEST_EPG_INFO_FLAG
     }
 
     // 收到Presenter的IpList更新Spinner
@@ -257,29 +279,33 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         return mSaveVideoPath;
     }
 
+
     //取得回傳的GsoapCallbackObject args[2] 再印出來
     @Override
-    public void getGsoapCallbackObject(String printSTBInfo){
+    public void printGsoapCallbackObject(String printSTBInfo){
         mShowInfoText = printSTBInfo;
         //這裡的判斷用的Flag 跟ToggleButton一樣
         switch (mToggleButtonFlag) {
-            case "startShareVideoOnSTBDeviceFlag":
-                Log.v("getGsoapCallbackObject", "startShareVideoOnSTBDeviceFlag");
+            case START_SHARE_VIDEO_ON_STB_DEVICE_INFO_FLAG:
+                Log.v("GsoapCallbackObject", "startShareVideoOnSTBDeviceFlag");
                 break;
-            case "getSTBDeviceInfoFlag":
+            case GET_STB_DEVICE_INFO_FLAG:
                 mShowInfoTextView.setText("查看機頂盒資訊\n" + mShowInfoText);
                 break;
-            case "getCapacityOnSTBDeviceInfoFlag":
+            case GET_CAPACITY_ON_STB_DEVICE_INFO_FLAG:
                 mShowInfoTextView.setText("查看機頂盒capacity資訊\n"+ mShowInfoText);
                 break;
-            case "getChannelInfoOnSTBDeviceInfoFlag":
+            case GET_CHANNEL_INFO_ON_STB_DEVICE_INFO_FLAG:
                 mShowInfoTextView.setText("查看機頂盒取得機頂盒的頻道清單\n"+ mShowInfoText);
                 break;
-            case "getChannelClassificationInfoFlag":
+            case GET_CHANNEL_CLASSIFICATION_INFO_FLAG:
                 mShowInfoTextView.setText("查看機頂盒的頻道Classification\n"+ mShowInfoText);
                 break;
+            case REQUEST_EPG_INFO_FLAG:
+                mShowInfoTextView.setText("查看機頂盒的EPG\n"+ mShowInfoText);
+                break;
             default:
-                Log.v("getGsoapCallbackObject", String.valueOf(mToggleButtonFlag));
+                Log.v("GsoapCallbackObject", String.valueOf(mToggleButtonFlag));
         }
     }
 

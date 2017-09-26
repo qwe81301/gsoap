@@ -28,7 +28,7 @@ public class MediaViewActivity extends AppCompatActivity implements EPGFragment.
         EPGListTab.setIndicator("EPG", null);//電子節目指南（英語：Electronic program guide，縮寫：EPG）
 
         mTabHost.addTab(channelListTab, ChannelListBlankFragment.class, null);// new ChannelListBlankFragment
-        mTabHost.addTab(EPGListTab, EPGFragment.class, null);
+        mTabHost.addTab(EPGListTab, EPGBlankFragment.class, null);
 
 
 
