@@ -458,6 +458,7 @@ public class MainPresenter implements IMainPresenter {
                             Log.v("requestEPGFlag", "object =" + args[2]);
                             setTextGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
 //                            setJsonEPG(String.valueOf(args[2]));
+                            break;
                         case START_SHARE_VIDEO_ON_STB_DEVICE_INVOKE_FLAG:
                             try {
                                 mVideoUrl = new JSONObject((String) args[2]).getString("url");//{"url":"http://172.16.129.98:8095","channel":{"freq":729000,"tsid":1,"serviceid": 2,"tveid":0}}

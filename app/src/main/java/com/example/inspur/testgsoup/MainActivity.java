@@ -13,6 +13,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 
+import com.inspur.youlook.sdk.gsoap.GsoapProxySingleton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -238,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
                             break;
                         case REQUEST_EPG_INFO_FLAG:
                             mShowInfoTextView.setText("停止(查看機頂盒的EPG)");
+
                             break;
                         default:
                             Log.v("ToggleButton default", String.valueOf(mToggleButtonFlag));
@@ -313,5 +316,11 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
     protected void onStart() {
         super.onStart();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        GsoapProxySingleton.getInstance().removeGsoapCallEventListener(this);
     }
 }
