@@ -46,7 +46,7 @@ public class ChannelListBlankFragment extends Fragment {
 
     //getChannelInfoOnSTBDevice 印出節目列表
     private void runChannelList(){
-        mMainPresenter.connectToSTBDevice("172.16.129.98", "UserID");
+        mMainPresenter.connectToSTBDevice("172.16.129.44", "UserID");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

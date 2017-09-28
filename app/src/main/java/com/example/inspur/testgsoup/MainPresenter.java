@@ -180,9 +180,9 @@ public class MainPresenter implements IMainPresenter {
     public void connectToSTBDevice(String deviceIP, String userID) {
 //        mInvokeFlag = "CONNECT_TO_STB_DEVICE_INVOKE_FLAG";
         mInvokeFlag = InvokeFlag.CONNECT_TO_STB_DEVICE_INVOKE_FLAG;
-
+        String uuid = userID;
         com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "connectToSTBDevice", "mDeviceIP=" + deviceIP + ", userID=" + userID);
-        connect(deviceIP, userID, gsoapCallback);
+        GsoapConnectionSingleton.getInstance().connect(deviceIP, userID, gsoapCallback);
     }
 
     public void connect(String deviceIP, String userID, GsoapCallback callback) {
@@ -298,6 +298,7 @@ public class MainPresenter implements IMainPresenter {
         // TODO userID & stbToken are not necessary.
         executeAsyncTask(new RequestEPGAsyncTask(callback), null, null, channelInfo);
     }
+    
     //機頂盒開始對外分享直播。
     //
     //

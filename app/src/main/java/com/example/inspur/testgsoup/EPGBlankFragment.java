@@ -46,7 +46,7 @@ public class EPGBlankFragment extends Fragment {
     }
 
     private void runEPG() {
-        mMainPresenter.connectToSTBDevice("172.16.129.98", "UserID_EPG_test1");
+        mMainPresenter.connectToSTBDevice("172.16.129.44", "UserID_EPG_test1");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

@@ -1,5 +1,6 @@
 package com.example.inspur.testgsoup;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,7 +33,18 @@ public class MediaViewActivity extends AppCompatActivity implements EPGFragment.
 
 
 
+//        initTabHost();
     }
+
+//    private void initTabHost(){
+//        mTabHost = getTabHost();
+//        //  tab1
+//        mTabHost.addTab(mTabHost.newTabSpec("places")
+//                .setIndicator("節目列表",
+//                        null) // the tab icon
+//                .setContent(new Intent(this, ChannelListBlankFragment.class)) // The contained activity
+//        );
+//    }
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {

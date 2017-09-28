@@ -52,7 +52,7 @@ Client connect to STB. If success, client will get a token,
 A token is a session-binding string. 
 
 @param[in] pClientInfo     e.g. 
-                        {"userid":"admin","uuid":"4028b88154d1460d0154d224060e000d"}
+                        {"userid":"admin","uuid":"4028b88154d1460d0154d224060e000d","verifycode":"1234"}//20170928 add "verifycode":"1234
                         userid is xmpp username,uuid is for http
                         request
 @param[in] pServerInfo   e.g. 
