@@ -65,8 +65,8 @@ public class GsoapFacade {
         }
     }
 
-    public void connect(String deviceIP, String userID, GsoapCallback callback) {
-        GsoapConnectionSingleton.getInstance().connect(deviceIP, userID, callback);
+    public void connect(String deviceIP, String userID, String uuid, String verifyCode, GsoapCallback callback) {
+        GsoapConnectionSingleton.getInstance().connect(deviceIP, userID, uuid, verifyCode, callback);
     }
 
     public void disconnect(GsoapCallback callback) {

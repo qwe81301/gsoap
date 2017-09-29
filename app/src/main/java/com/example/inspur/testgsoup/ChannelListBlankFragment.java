@@ -63,6 +63,11 @@ public class ChannelListBlankFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_channel_list_blank, container, false);
         mChannelListListView = (ListView)view.findViewById(R.id.channelListListView);
+        //切換回來之後list不見的問題 或是不是這裡的問題
+        mChannelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, mChannelList);
+        mChannelListListView.setAdapter(mChannelListArrayAdapter);
+
         return view;
     }
 

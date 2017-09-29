@@ -30,6 +30,7 @@ public class GsoapConnectionSingleton {
     private String mCurrentConnectionIP = "";
     private String mCurrentUserName = "";
     private String mCurrentStbToken = "";
+    private String mCurrentUUID = "";
 
     private List<GsoapConnectionListener> mGsoapConnectionListenerList = new ArrayList<>();
 
@@ -65,10 +66,11 @@ public class GsoapConnectionSingleton {
         return mCurrentUserName;
     }
 
-    public void setCurrentConnectionInfo(String connectionIP, String currentUserName) {
+    public void setCurrentConnectionInfo(String connectionIP, String currentUserName, String currentUUID) {
         this.mCurrentConnectionIP = connectionIP;
         this.mCurrentUserName = currentUserName;
-        PreferenceUtil.saveConnectionInfo(mContext, mCurrentConnectionIP, mCurrentUserName);
+        this.mCurrentUUID = currentUUID;
+        PreferenceUtil.saveConnectionInfo(mContext, mCurrentConnectionIP, mCurrentUserName, mCurrentUUID);
     }
 
     public boolean isConnecting() {
@@ -93,8 +95,8 @@ public class GsoapConnectionSingleton {
 //        startKeepAlive();
     }
 
-    public void connect(String deviceIP, String userID, GsoapCallback callback) {
-        Log.getInstance().writeLog(TAG, "connect", "deviceIP=" + deviceIP + ", userID=" + userID);
+    public void connect(String deviceIP, String userID, String uuid, String verifyCode, GsoapCallback callback) {
+        Log.getInstance().writeLog(TAG, "connect", "deviceIP=" + deviceIP + ", userID=" + userID + ",verifyCode="+verifyCode);
         if (userID == null || userID.equals("") || deviceIP == null || deviceIP.equals("")) {
             int statusCode = Constants.RN_STATUS_PARAMETER_ERROR;
             String statusMsg = Constants.RN_STATUS_CODE_MAP.get(statusCode);
@@ -102,23 +104,24 @@ public class GsoapConnectionSingleton {
                 callback.invoke(statusCode, statusMsg);
             return;
         }
-        if (!isConnecting) {
-            String clientInfo = "{\"userid\":\"" + userID + "\",\"uuid\":\"" + userID + "\"}";
+        if (!isConnecting) {//連接上進入此行
+            String clientInfo = "{\"userid\":\""+userID+"\",\"uuid\":\"" + uuid +"\",\"verifyCode\":\"" + verifyCode +"\"}";
             new GsoapConnectAsyncTask(deviceIP, clientInfo, callback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             Log.getInstance().writeLog(TAG, "connect", "Failed! Because: is connecting.");
         }
     }
 
-    public void connect(String deviceIP, String userID) {
-        connect(deviceIP, userID, null);
+    public void connect(String deviceIP, String userID, String uuid, String verifyCode) {
+        connect(deviceIP, userID, uuid, verifyCode, null);
     }
 
     public void reconnect() {
         if (isWifiAvailable()) {
             String lastIP = PreferenceUtil.getLastIP(mContext);
             String lastUserID = PreferenceUtil.getLastUserName(mContext);
-            connect(lastIP, lastUserID);
+            String lastUUID = PreferenceUtil.getLastUUID(mContext);
+            connect(lastIP, lastUserID, lastUUID, "");
         } else {
             Log.getInstance().writeLog(TAG, "reconnect()", "Failed! Because: Wifi unavailable.");
         }
@@ -136,7 +139,7 @@ public class GsoapConnectionSingleton {
                         e.printStackTrace();
                     }
                     if (isWifiAvailable() && isConnected) {
-                        connect(mCurrentConnectionIP, mCurrentUserName);
+                        connect(mCurrentConnectionIP, mCurrentUserName, mCurrentUserName, "");//
                     }
                 }
             }
@@ -162,15 +165,17 @@ public class GsoapConnectionSingleton {
             mGsoapConnectionListenerList.remove(connectionListener);
     }
 
-    public void connectSuccess(String connectIp, String connectResult) {
+    public void connectSuccess(String connectIp, String connectResult, String clientInfo) {
         isConnected = true;
         // connectResultInfo = {"userid":"15123456789","token":"15123456789-1025-413744719","expires":60}
         Log.getInstance().writeLog(TAG, "connectSuccess", "connectResult=" + connectResult);
         try {
-            JSONObject object = new JSONObject(connectResult);
-            String userId = object.getString("userid");
-            mCurrentStbToken = object.getString("token");
-            setCurrentConnectionInfo(connectIp, userId);
+            JSONObject resultJSONObject = new JSONObject(connectResult);
+            String userId = resultJSONObject.getString("userid");
+            mCurrentStbToken = resultJSONObject.getString("token");
+            JSONObject clientJSONObject = new JSONObject(clientInfo);
+            mCurrentUUID = clientJSONObject.getString("uuid");
+            setCurrentConnectionInfo(connectIp, userId, mCurrentUUID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -188,7 +193,7 @@ public class GsoapConnectionSingleton {
 
     public void disconnectSuccess() {
         isConnected = false;
-        setCurrentConnectionInfo("", "");
+        setCurrentConnectionInfo("", "", "");
         for (GsoapConnectionListener gsoapConnectionListener : mGsoapConnectionListenerList) {
             gsoapConnectionListener.disconnectSuccess();
         }
@@ -208,6 +213,8 @@ public class GsoapConnectionSingleton {
     }
 
     public boolean isWifiAvailable() {
+        if (mContext == null)
+            return false;
         WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
 

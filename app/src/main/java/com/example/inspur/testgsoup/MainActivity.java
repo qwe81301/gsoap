@@ -1,5 +1,7 @@
 package com.example.inspur.testgsoup;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 mSTBDeviceIP = adapterView.getItemAtPosition(position).toString();
                 Toast.makeText(getBaseContext(), mSTBDeviceIP, Toast.LENGTH_SHORT).show();
-                Log.v("searchIPChoice", mSTBDeviceIP);
+                Log.v("ChoiceSearchIP", mSTBDeviceIP);
             }
 
             @Override
@@ -169,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
             @Override
             public void onClick(View view) {
                 if (mConnectSTBToggleButton.isChecked()) {
-                    mMainPresenter.connectToSTBDevice(mSTBDeviceIP, mUserID);
+//                    mMainPresenter.connectToSTBDevice(mSTBDeviceIP, mUserID);
+                    mMainPresenter.connectToSTBDeviceByJSON("");
                     mShowInfoTextView.setText("連線上" + mSTBDeviceIP + "\n點選第二個按鈕來觸發開始(錄製)功能");
                     mFeatureStartStopToggleButton.setEnabled(true);
                     mShowIpSpinner.setEnabled(false);
@@ -310,6 +314,30 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
             default:
                 Log.v("GsoapCallbackObject", String.valueOf(mToggleButtonFlag));
         }
+    }
+
+    @Override
+    public void showVerifyEditDialog(){
+        AlertDialog.Builder editDialog = new AlertDialog.Builder(this);
+        editDialog.setTitle("輸入驗證碼");
+        final EditText editText = new EditText(this);
+        editText.setText("");
+        editDialog.setView(editText);
+
+        editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            // do something when the button is clicked
+            public void onClick(DialogInterface arg0, int arg1) {
+//                textOut.setText(editText.getText().toString());
+                mMainPresenter.connectToSTBDeviceByJSON(editText.getText().toString());
+            }
+        });
+        editDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            // do something when the button is clicked
+            public void onClick(DialogInterface arg0, int arg1) {
+                //...
+            }
+        });
+        editDialog.show();
     }
 
     @Override

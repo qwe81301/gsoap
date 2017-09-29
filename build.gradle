@@ -1,5 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+//新增驗證碼
+project.ext {
+    compileSdkVersion = 24
+    buildToolsVersion = '24.0.2'
+}
+
+def genVersionName(majorCode, release, versionCode) {
+    return majorCode + '.' + release + '.' + versionCode
+}
+//下標記範圍新增驗證碼
+
 buildscript {
     repositories {
         jcenter()

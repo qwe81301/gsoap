@@ -12,5 +12,6 @@ public interface IMainActivity {
     void updateIpList(List<String> ipList);
     String getSaveVideoPath();
     void printGsoapCallbackObject(String print);
+    void showVerifyEditDialog();
 
 }

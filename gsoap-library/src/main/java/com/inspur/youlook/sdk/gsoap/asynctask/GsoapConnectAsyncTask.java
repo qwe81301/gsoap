@@ -39,12 +39,14 @@ public class GsoapConnectAsyncTask extends AsyncTask<String, Integer, CallbackSt
                 String clientInfo = mClientInfo;
                 Log.getInstance().writeLog(TAG, "doInBackground()", "Client Info = " + clientInfo);
                 // connect to stb
+                //run response 出現密碼
                 JniResponse response = GsoapProxySingleton.getInstance().hpstb_ConnectToSTB(clientInfo, GsoapUtils.getServerInfo(mServerIp));
+
                 int resultCode = response != null ? response.getReturnCode() : -1;
                 Log.getInstance().writeLog(TAG, "doInBackground", "hpstb_ConnectToSTB " + (resultCode == 0 ? "Success!" : "Failed!"));
                 if (resultCode == 0) {
                     resultInfo = response.getReturnValue();
-                    GsoapConnectionSingleton.getInstance().connectSuccess(mServerIp, resultInfo);
+                    GsoapConnectionSingleton.getInstance().connectSuccess(mServerIp, resultInfo, clientInfo);
                 } else {
                     GsoapConnectionSingleton.getInstance().connectFailed();
                 }

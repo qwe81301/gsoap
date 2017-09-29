@@ -16,6 +16,7 @@ public interface IMainPresenter {
     void searchSTBDevices();
     void stopSearchSTBDevices();
     void connectToSTBDevice(String deviceIP, String userID);
+    void connectToSTBDeviceByJSON(String verifyCode);
     void disconnectToSTBDevice(String userID, String stbToken);
     void getSTBDeviceInfo(String userID, String stbToken);
     void getCapacityOnSTBDevice(String userID, String stbToken);

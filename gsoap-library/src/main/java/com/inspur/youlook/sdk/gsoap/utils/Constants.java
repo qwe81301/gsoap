@@ -30,6 +30,9 @@ public class Constants {
     public static final int RN_STATUS_CODE_GSOAP_HPSTB_NOT_BIND = 2012;
     public static final int RN_STATUS_CODE_GSOAP_SEARCHING_OVER_30S = 2013;
     public static final int RN_STATUS_CODE_GSOAP_NOT_CONNECT = 2014;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_NEED_PARENTRATING_PASSWORD = 2015;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_CONNECT_NEED_VERIFY = 2016;
+    public static final int RN_STATUS_CODE_GSOAP_HPSTB_CONNECT_VERIFY_FAIL = 2017;
 
     /* React Native Status Code Map */
     public static HashMap<Integer, String> RN_STATUS_CODE_MAP = new HashMap<Integer, String>();
@@ -53,5 +56,9 @@ public class Constants {
         RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_NOT_BIND, "機頂盒回傳:HPSTB_NOT_BIND");
         RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_SEARCHING_OVER_30S, "搜尋機頂盒超時30s");
         RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_NOT_CONNECT, "尚未連接機頂盒, 無法進行此操作");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_NEED_PARENTRATING_PASSWORD, "機頂盒回傳:HPTSTB_NEED_PARENTRATING_PASSWD");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_CONNECT_NEED_VERIFY, "機頂盒回傳:HPTSTB_CONNECT_NEED_VERIFY");
+        RN_STATUS_CODE_MAP.put(RN_STATUS_CODE_GSOAP_HPSTB_CONNECT_VERIFY_FAIL, "機頂盒回傳:HPTSTB_CONNECT_VERIFY_FAIL");
+
     }
 }

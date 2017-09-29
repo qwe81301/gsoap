@@ -35,6 +35,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -182,25 +183,29 @@ public class MainPresenter implements IMainPresenter {
         mInvokeFlag = InvokeFlag.CONNECT_TO_STB_DEVICE_INVOKE_FLAG;
         String uuid = userID;
         com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "connectToSTBDevice", "mDeviceIP=" + deviceIP + ", userID=" + userID);
-        GsoapConnectionSingleton.getInstance().connect(deviceIP, userID, gsoapCallback);
+        GsoapConnectionSingleton.getInstance().connect(deviceIP, userID, uuid, "", gsoapCallback);
     }
 
-    public void connect(String deviceIP, String userID, GsoapCallback callback) {
-        com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "connect", "mDeviceIP=" + deviceIP + ", userID=" + userID);
-        if (userID == null || userID.equals("") || deviceIP == null || deviceIP.equals("")) {
-            int statusCode = Constants.RN_STATUS_PARAMETER_ERROR;
-            String statusMsg = Constants.RN_STATUS_CODE_MAP.get(statusCode);
-            if (callback != null)
-                callback.invoke(statusCode, statusMsg);
-            return;
-        }
-        if (!mIsConnecting) {//連接上進入此行
-            String clientInfo = "{\"userid\":\"" + userID + "\",\"uuid\":\"" + userID + "\"}";
-            new GsoapConnectAsyncTask(deviceIP, clientInfo, callback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "connect", "Failed! Because: is connecting.");
-        }
+    //連線STB（驗證碼）
+    //
+    //
+    @Override
+    public void connectToSTBDeviceByJSON(String verifyCode) {
+//        ReadableNativeMap dataNativeMap = (ReadableNativeMap) dataObject;
+//        HashMap hashMap = dataNativeMap.toHashMap();
+//        Log.getInstance().writeLog(TAG, "connectToSTBDeviceByJSON", "hashMap="+ hashMap);
+//        String deviceIP = (String)hashMap.get("deviceIP");
+//        String userID = (String)hashMap.get("userID");
+//        String verifyCode = (String)hashMap.get("verifyCode");
+//        mGsoapProxy.connect(deviceIP, userID, userID, verifyCode, gsoapCallback);
+        mInvokeFlag = InvokeFlag.CONNECT_TO_STB_DEVICE_BY_JSON;
+        GsoapConnectionSingleton.getInstance().connect("172.16.129.44", "userID_verify", "userID_verify", verifyCode, gsoapCallback);
+
     }
+
+
+
+
 
     //斷開STB
     //
@@ -412,6 +417,7 @@ public class MainPresenter implements IMainPresenter {
 
     private enum InvokeFlag {
         CONNECT_TO_STB_DEVICE_INVOKE_FLAG,
+        CONNECT_TO_STB_DEVICE_BY_JSON,
         GET_STB_DEVICE_INFO_INVOKE_FLAG,
         GET_CAPACITY_ON_STB_DEVICE_INVOKE_FLAG,
         GET_CHANNEL_INFO_ON_STB_DEVICE_INVOKE_FLAG,
@@ -425,10 +431,14 @@ public class MainPresenter implements IMainPresenter {
         @Override
         public void invoke(Object... args) {
             if (gsoapCallback != null) {
-//                int statusCode = (int) args[0];
+
+                int statusCode = (int) args[0];
 //                String statusMsg = (String) args[1];
                 Log.v("gsoapCallback", "statusCode1=" + args[0] + ", statusMsg=" + args[1]);
                 Object object = null;
+                if(statusCode == 2016){//verifyCode
+                    mMainActivity.showVerifyEditDialog();
+                }
                 if (args.length == 3) {
                     Log.v("gsoapCallback args[2]", "object =" + args[2]);
 //                    setTextGsoapCallbackObject(String.valueOf(args[2]));
@@ -437,6 +447,9 @@ public class MainPresenter implements IMainPresenter {
                     switch (mInvokeFlag) {
                         case CONNECT_TO_STB_DEVICE_INVOKE_FLAG:
                             Log.v("connectToSTBDeviceFlag", "object =" + args[2]);
+                            break;
+                        case CONNECT_TO_STB_DEVICE_BY_JSON:
+                            Log.v("connectToSTBDeviceJson", "object =" + args[2]);
                             break;
                         case GET_STB_DEVICE_INFO_INVOKE_FLAG:
                             Log.v("getSTBInfoInvokeFlag", "object =" + args[2]);
