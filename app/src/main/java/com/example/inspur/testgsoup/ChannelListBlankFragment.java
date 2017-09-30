@@ -45,14 +45,14 @@ public class ChannelListBlankFragment extends Fragment {
     }
 
     //getChannelInfoOnSTBDevice 印出節目列表
-    private void runChannelList(){
-        mMainPresenter.connectToSTBDevice("172.16.129.44", "UserID");
+    private void runChannelList() {
+//        mMainPresenter.connectToSTBDevice("172.16.129.44", "UserID_ChannelInfo_test1");
+        mMainPresenter.connectToSTBDeviceByJSON("");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        mMainPresenter.getChannelClassification("UserID", "StbToken");
         mMainPresenter.getChannelInfoOnSTBDevice("UserID", "StbToken");
     }
 
@@ -62,7 +62,7 @@ public class ChannelListBlankFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_channel_list_blank, container, false);
-        mChannelListListView = (ListView)view.findViewById(R.id.channelListListView);
+        mChannelListListView = (ListView) view.findViewById(R.id.channelListListView);
         //切換回來之後list不見的問題 或是不是這裡的問題
         mChannelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, mChannelList);
@@ -86,9 +86,9 @@ public class ChannelListBlankFragment extends Fragment {
 //          "type":"tv",
 //          "bat":""
 //    },
-    //[{"bat":1,"name":"央视频道"}, ... ,{"bat":2,"name":"北京频道"}]
-    public void dismantleJsonChannelList(String channelList){
-//        mChannelList.clear();
+
+    public void dismantleJsonChannelList(String channelList) {
+        mChannelList.clear();
         try {
             JSONArray channelListJsonArray = new JSONArray(channelList);
             for (int i = 0; i < channelListJsonArray.length(); i++) {
@@ -96,7 +96,7 @@ public class ChannelListBlankFragment extends Fragment {
                 Log.v("channelListJsonObject", String.valueOf(channelListJsonObject));
                 mChnoChannelListItem = channelListJsonObject.getString("chno");
                 mNameChannelListItem = channelListJsonObject.getString("name");
-                String channelListText = "("+ mChnoChannelListItem +")  "+mNameChannelListItem;
+                String channelListText = "(" + mChnoChannelListItem + ")  " + mNameChannelListItem;
                 Log.v("mBatNameChannelListItem", channelListText);
                 mChannelList.add(channelListText);
             }
@@ -108,10 +108,10 @@ public class ChannelListBlankFragment extends Fragment {
     }
 
     //showChannelListToFragment
-    private void showChannelList(){
-            mChannelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, mChannelList);
-            mChannelListListView.setAdapter(mChannelListArrayAdapter);
+    private void showChannelList() {
+        mChannelListArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, mChannelList);
+        mChannelListListView.setAdapter(mChannelListArrayAdapter);
 //            mChannelListArrayAdapter.notifyDataSetChanged();
     }
 

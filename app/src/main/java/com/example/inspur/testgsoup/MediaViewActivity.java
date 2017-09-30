@@ -1,6 +1,7 @@
 package com.example.inspur.testgsoup;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,9 @@ public class MediaViewActivity extends AppCompatActivity implements EPGFragment.
 
         mTabHost.addTab(channelListTab, ChannelListBlankFragment.class, null);// new ChannelListBlankFragment
         mTabHost.addTab(EPGListTab, EPGBlankFragment.class, null);
+
+
+
 
 
 

@@ -2,6 +2,8 @@ package com.example.inspur.testgsoup;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -46,7 +48,8 @@ public class EPGBlankFragment extends Fragment {
     }
 
     private void runEPG() {
-        mMainPresenter.connectToSTBDevice("172.16.129.44", "UserID_EPG_test1");
+//        mMainPresenter.connectToSTBDevice("172.16.129.44", "UserID_EPG_test1");
+        mMainPresenter.connectToSTBDeviceByJSON("");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -61,6 +64,9 @@ public class EPGBlankFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_epg_blank, container, false);
         mEPGListView = (ListView) view.findViewById(R.id.epgListView);
+        mEPGArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, mEPGList);
+        mEPGListView.setAdapter(mEPGArrayAdapter);
         return view;
     }
 
@@ -69,25 +75,39 @@ public class EPGBlankFragment extends Fragment {
 
         try {
             JSONArray epgJsonArray = new JSONArray(epg);
+            Log.v("epg_Length_7Dx24H=168", String.valueOf(epgJsonArray.length()));
             for (int i = 0; i < epgJsonArray.length(); i++) {
                 JSONObject epgJsonObject = epgJsonArray.getJSONObject(i);
-                Log.v("channelListJsonObject", String.valueOf(epgJsonObject));
-                mEPGItem1 = epgJsonObject.getString("EPGItem1");
-                mEPGItem2 = epgJsonObject.getString("EPGItem1");
+//                Log.v("channelListJsonObject", String.valueOf(epgJsonObject));
+                mEPGItem1 = epgJsonObject.getString("startDateTime");
+                mEPGItem2 = epgJsonObject.getString("eventName");
                 String epgText = "(" + mEPGItem1 + ")  " + mEPGItem2;
                 Log.v("mBatNameChannelListItem", epgText);
                 mEPGList.add(epgText);
             }
             Log.v("epgTextAll", String.valueOf(mEPGList));
-            showEPG();
+            mShowEPGHandler.sendEmptyMessage(0x123);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+
+    Handler mShowEPGHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            if (msg.what == 0x123) {
+                mEPGArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_list_item_1, mEPGList);
+                mEPGListView.setAdapter(mEPGArrayAdapter);
+//                mEPGArrayAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
     private void showEPG() {
         mEPGArrayAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, mEPGList);
         mEPGListView.setAdapter(mEPGArrayAdapter);
+//        mEPGArrayAdapter.notifyDataSetChanged();
     }
 }

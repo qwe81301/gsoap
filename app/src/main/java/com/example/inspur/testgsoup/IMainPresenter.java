@@ -28,6 +28,7 @@ public interface IMainPresenter {
     void stopShareVideoOnSTBDevice(String userID, String stbToken, int channelFreq, int channelTsid, int channelServiceId);
     void saveVideoStreaming(String ip, int port,String filePath);
     void updateViewIpList();
+    void setJsonEPG(String epg);
 
 
 }

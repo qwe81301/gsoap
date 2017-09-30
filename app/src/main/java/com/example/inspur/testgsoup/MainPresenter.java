@@ -68,19 +68,19 @@ public class MainPresenter implements IMainPresenter {
     private String mVideoUrlPort;
     private List<String> mSearchIpList = new ArrayList<String>();
 
-    public MainPresenter(IMainActivity activity, Context context) {
-        mMainActivity = activity;
+    public MainPresenter(IMainActivity mainActivity, Context context) {
+        mMainActivity = mainActivity;
         mMainModel = new MainModel();
         //初始化
         init(context);
     }
 
-    public MainPresenter(ChannelListBlankFragment fragment, Context context) {
-        mChannelListBlankFragment = fragment;
+    public MainPresenter(ChannelListBlankFragment mChannelListBlankFragment, Context context) {
+        this.mChannelListBlankFragment = mChannelListBlankFragment;
         init(context);
     }
-    public MainPresenter(EPGBlankFragment fragment, Context context) {
-        mEPGBlankFragment = fragment;
+    public MainPresenter(EPGBlankFragment mEPGBlankFragment, Context context) {
+        this.mEPGBlankFragment = mEPGBlankFragment;
         init(context);
     }
 
@@ -179,7 +179,6 @@ public class MainPresenter implements IMainPresenter {
     //
     @Override
     public void connectToSTBDevice(String deviceIP, String userID) {
-//        mInvokeFlag = "CONNECT_TO_STB_DEVICE_INVOKE_FLAG";
         mInvokeFlag = InvokeFlag.CONNECT_TO_STB_DEVICE_INVOKE_FLAG;
         String uuid = userID;
         com.inspur.youlook.sdk.gsoap.utils.Log.getInstance().writeLog(TAG, "connectToSTBDevice", "mDeviceIP=" + deviceIP + ", userID=" + userID);
@@ -301,7 +300,7 @@ public class MainPresenter implements IMainPresenter {
     }
     public void requestEPG(String channelInfo, GsoapCallback callback) {
         // TODO userID & stbToken are not necessary.
-        executeAsyncTask(new RequestEPGAsyncTask(callback), null, null, channelInfo);
+        executeAsyncTask(new TestRequestEPGAsyncTask( this, callback), null, null, channelInfo);
     }
     
     //機頂盒開始對外分享直播。
@@ -461,8 +460,8 @@ public class MainPresenter implements IMainPresenter {
                             break;
                         case GET_CHANNEL_INFO_ON_STB_DEVICE_INVOKE_FLAG:
                             Log.v("channelSTBInvokeFlag", "object =" + args[2]);
-                            setTextGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
-//                            setJsonChannelList(String.valueOf(CHANNEL_INFO_DATA));//因為原始資料有編碼不同(有簡體字)導致缺少"t"的問題，所以先用寫死資料方法解決
+//                            setTextGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
+                            setJsonChannelList(String.valueOf(CHANNEL_INFO_DATA));//因為原始資料有編碼不同(有簡體字)導致缺少"t"的問題，所以先用寫死資料方法解決
                             break;
                         case GET_CHANNEL_CLASSIFICATION_INVOKE_FLAG:
                             Log.v("ClassificationFlag", "object =" + args[2]);
@@ -470,7 +469,7 @@ public class MainPresenter implements IMainPresenter {
                             break;
                         case REQUEST_EPG_INVOKE_FLAG:
                             Log.v("requestEPGFlag", "object =" + args[2]);
-                            setTextGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
+//                            setTextGsoapCallbackObject(String.valueOf(args[2]));// 為了做MediaViewActivity 暫時註解 到時候要解回來
 //                            setJsonEPG(String.valueOf(args[2]));
                             break;
                         case START_SHARE_VIDEO_ON_STB_DEVICE_INVOKE_FLAG:
@@ -515,7 +514,7 @@ public class MainPresenter implements IMainPresenter {
         mChannelListBlankFragment.dismantleJsonChannelList(channelList);
     }
 
-    private void setJsonEPG(String epg) {
+    public void setJsonEPG(String epg) {
         mEPGBlankFragment.dismantleJsonEPG(epg);
     }
 
